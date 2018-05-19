@@ -113,28 +113,34 @@ $("document").ready(function () {
         }
     ];
     // ### LOGIC ###
-    $("#answerText").on("click", function (event) {
-        // stop();
-        var userGuess = $(event).attr("data-value");
-        console.log("Guessed: " + userGuess);
-        // this needs a timer!
+    $("#answerText").on("click", ".answerChoice", function (event) {
+        stop();
+        var userGuess = ($(this).attr("choice-value"));
+        userGuess = parseInt(userGuess);
+        console.log(userGuess);
+
         if (userGuess === triviaQuestions[indexOfCurrentQuestion].correctAnswer) {
             userQuestionsRight++;
             $("#questionText").text("That's right!");
             $("#answerText").empty();
-            setTimeout(loadNextQuestion, 1000 * 3);
+            if (indexOfCurrentQuestion >= 9) {
+                displayResults();
+            } else {
+                setTimeout(loadNextQuestion, 10 * 2);
+            }
         } else {
             userQuestionsWrong++
             $("#questionText").text("That's incorrect.");
             $("#answerText").empty();
-            setTimeout(loadNextQuestion, 1 * 3);
-        }
-        if (indexOfCurrentQuestion === 9) {
-            displayResults();
+            if (indexOfCurrentQuestion >= 9) {
+                displayResults();
+            } else {
+                setTimeout(loadNextQuestion, 10 * 2);
+            }
         }
     });
 
-    $("#startQuizBtn").on("click", function() {
+    $("#startQuizBtn").on("click", function () {
         quizStart();
     });
 
@@ -172,7 +178,7 @@ $("document").ready(function () {
         for (i = 0; i < 4; i++) {
             var newAnswerChoice = $("<li></li>");
             newAnswerChoice.addClass("answerChoice");
-            newAnswerChoice.attr("data-value", i);
+            newAnswerChoice.attr("choice-value", i);
             newAnswerChoice.text(triviaQuestions[indexOfCurrentQuestion].answerText[i]);
             $("#answerText").append(newAnswerChoice);
         }
