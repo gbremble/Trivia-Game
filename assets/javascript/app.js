@@ -5,7 +5,7 @@ $("document").ready(function () {
     var userQuestionsWrong = 0;
     var unansweredQuestions = 0;
     // clock variables
-    var countdownTimer = 30;
+    var countdownTimer = 20;
     // var clockIsTicking = false; --> I'd like to prevent the clock from going negative with this var. Future improvement!
     var interval; // declared, but not initialized
 
@@ -119,35 +119,38 @@ $("document").ready(function () {
         userGuess = parseInt(userGuess);
         console.log(userGuess);
 
-        if (userGuess === triviaQuestions[indexOfCurrentQuestion].correctAnswer) {
+        if (userGuess === triviaQuestions[indexOfCurrentQuestion - 1].correctAnswer) {
             userQuestionsRight++;
             $("#questionText").text("That's right!");
             $("#answerText").empty();
-            if (indexOfCurrentQuestion >= 9) {
+            if (indexOfCurrentQuestion >= 10) {
                 displayResults();
             } else {
-                setTimeout(loadNextQuestion, 10 * 2);
+                setTimeout(loadNextQuestion, 1000 * 2);
             }
         } else {
             userQuestionsWrong++
-            $("#questionText").text("That's incorrect.");
+            $("#questionText").text("That's incorrect. The correct answer was " + triviaQuestions[indexOfCurrentQuestion - 1].answerText[triviaQuestions[indexOfCurrentQuestion - 1].correctAnswer]);
             $("#answerText").empty();
-            if (indexOfCurrentQuestion >= 9) {
+            if (indexOfCurrentQuestion >= 10) {
                 displayResults();
             } else {
-                setTimeout(loadNextQuestion, 10 * 2);
+                setTimeout(loadNextQuestion, 1000 * 3);
             }
         }
     });
 
     $("#startQuizBtn").on("click", function () {
         quizStart();
+
     });
 
     // ### FUNCTIONS ###
     function quizStart() {
         console.log("counting down");
+        indexOfCurrentQuestion = 0;
         loadNextQuestion();
+        $("#startQuizBtn").remove();
     }
 
     function run() {
@@ -157,7 +160,7 @@ $("document").ready(function () {
 
     //  The stop function
     function stop() {
-        countdownTimer = 30;
+        countdownTimer = 20;
         clearInterval(interval);
     }
 
@@ -166,8 +169,15 @@ $("document").ready(function () {
         $("#timerDiv").text("Time left: " + countdownTimer);
 
         if (countdownTimer === 0) {
-            stop();
-            displayResults();
+            if (indexOfCurrentQuestion >= 9) {
+                stop();
+                displayResults();
+            } else {
+                stop();
+                $("#answerText").empty();
+                loadNextQuestion();
+            }
+
         }
     }
 
